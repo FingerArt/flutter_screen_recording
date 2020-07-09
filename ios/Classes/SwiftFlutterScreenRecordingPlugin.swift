@@ -18,7 +18,7 @@ var myResult: FlutterResult?
 let screenSize = UIScreen.main.bounds
     
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "flutter_screen_recording", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(name: "com.isvisoft/flutter_screen_recording", binaryMessenger: registrar.messenger())
     let instance = SwiftFlutterScreenRecordingPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }

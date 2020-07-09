@@ -7,7 +7,6 @@ buildscript {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
-
     }
 
     dependencies {
@@ -28,7 +27,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -52,7 +51,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'com.github.HBiSoft:HBRecorder:0.1.4'
+    implementation 'com.github.HBiSoft:HBRecorder:0.1.9'
 
 }

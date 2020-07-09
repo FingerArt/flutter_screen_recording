@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
-import 'package:quiver/async.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:open_file/open_file.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,39 +12,22 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool recording = false;
   int _time = 0;
-
-  requestPermissions() async {
-    await PermissionHandler().requestPermissions([
-      PermissionGroup.storage,
-      PermissionGroup.photos,
-      PermissionGroup.microphone,
-    ]);
-  }
+  String recordHintText = "Record";
+  Timer _timer;
 
   @override
   void initState() {
+    FlutterScreenRecording.addRecorderListener((isCompleted, errCode) {
+      debugPrint("isCompleted: $isCompleted, errCode: $errCode");
+    });
     super.initState();
-    requestPermissions();
-    startTimer();
   }
 
-  void startTimer() {
-    CountdownTimer countDownTimer = new CountdownTimer(
-      new Duration(seconds: 1000),
-      new Duration(seconds: 1),
-    );
-
-    var sub = countDownTimer.listen(null);
-    sub.onData((duration) {
-      setState(() => _time++);
-    });
-
-    sub.onDone(() {
-      print("Done");
-      sub.cancel();
-    });
+  @override
+  void dispose() {
+    _stopTimer();
+    super.dispose();
   }
 
   @override
@@ -56,60 +37,61 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Flutter Screen Recording'),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Time: $_time\n'),
-            !recording
-                ? Center(
-                    child: RaisedButton(
-                      child: Text("Record Screen"),
-                      onPressed: () => startScreenRecord(false),
-                    ),
-                  )
-                : Container(),
-            !recording
-                ? Center(
-                    child: RaisedButton(
-                      child: Text("Record Screen & audio"),
-                      onPressed: () => startScreenRecord(true),
-                    ),
-                  )
-                : Center(
-                    child: RaisedButton(
-                      child: Text("Stop Record"),
-                      onPressed: () => stopScreenRecord(),
-                    ),
-                  )
-          ],
+        body: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text('Time: $_time'),
+              MaterialButton(
+                color: Theme.of(context).accentColor,
+                onPressed: _toggleScreenRecord,
+                child: Text(
+                  recordHintText,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  startScreenRecord(bool audio) async {
-    bool start = false;
-
-    if (audio) {
-      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title");
+  void _toggleScreenRecord() async {
+    bool isRecording = await FlutterScreenRecording.isRecording;
+    debugPrint("isRecording: $isRecording");
+    var icBytes = await rootBundle.load("assets/images/ic_notify.png");
+    if (isRecording) {
+      await FlutterScreenRecording.stopRecordScreen();
+      _stopTimer();
+      setState(() {
+        recordHintText = "Record";
+      });
     } else {
-      start = await FlutterScreenRecording.startRecordScreen("Title");
+      try {
+        await FlutterScreenRecording.startRecordScreen(
+          notificationTitle: "Recording your screen",
+          notificationIcon: icBytes.buffer.asUint8List(),
+        );
+        _startTimer();
+        setState(() {
+          recordHintText = "Stop";
+        });
+      } on PlatformException catch (e) {
+        debugPrint("start error: $e");
+      }
     }
-
-    if (start) {
-      setState(() => recording = !recording);
-    }
-
-    return start;
   }
 
-  stopScreenRecord() async {
-    String path = await FlutterScreenRecording.stopRecordScreen;
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) => setState(() => _time = timer.tick));
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
     setState(() {
-      recording = !recording;
+      _time = 0;
     });
-    print("Opening video");
-    print(path);
-    OpenFile.open(path);
   }
 }
