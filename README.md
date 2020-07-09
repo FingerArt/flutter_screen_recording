@@ -1,5 +1,7 @@
 # flutter_screen_recording
 
+<img align="right" src="./screenshot/flutter_screen_recording.gif">
+
 A new Flutter plugin for record the screen. This plug-in requires Android SDK 21+ and iOS 10+
 
 
@@ -23,17 +25,6 @@ bool started = FlutterScreenRecording.startRecordScreenAndAudio(videoName);
 
 ```dart
 String path = FlutterScreenRecording.stopRecordScreen;
-```
-
-## Android
-
-Flutter_Screen_Recorder do not request permissions necessary. You can use [Permission_handler](https://pub.dev/packages/permission_handler), a permissions plugin for Flutter.
-Require and add the following permissions in your manifest:
-
-```java
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
 ```
 
 ## iOS
