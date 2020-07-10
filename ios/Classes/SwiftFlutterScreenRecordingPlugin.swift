@@ -40,6 +40,8 @@ let screenSize = UIScreen.main.bounds
             result(String(documentsPath.appendingPathComponent(nameVideo)))
         }
          result("")
+    }else if(call.method=="isRecording") {
+
     }
   }
 

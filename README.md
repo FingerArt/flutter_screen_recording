@@ -1,6 +1,9 @@
 # flutter_screen_recording
 
-<img align="right" src="./screenshot/flutter_screen_recording.gif">
+<img align="right" src="./screenshot/flutter_screen_recording.gif" height="500px">
+
+[![pub package](https://img.shields.io/pub/v/flutter_screen_recording.svg)](https://pub.dartlang.org/packages/flutter_screen_recording)
+
 
 A new Flutter plugin for record the screen. This plug-in requires Android SDK 21+ and iOS 10+
 
