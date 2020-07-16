@@ -1,3 +1,6 @@
+## 1.0.11
+* Update docs
+
 ## 1.0.10
 * Update docs
 

@@ -27,12 +27,10 @@ let screenSize = UIScreen.main.bounds
 
     if(call.method == "startRecordScreen"){
          myResult = result
-//         let args = call.arguments as? Dictionary<String, Any>
+         let args = call.arguments as? Dictionary<String, Any>
 
-//         self.recordAudio = (args?["audio"] as? Bool)!
-//         self.nameVideo = (args?["name"] as? String)!+".mp4"
-        self.recordAudio = true
-        self.nameVideo = "test.mp4"
+         self.recordAudio = (args?["audio"] as? Bool)!
+         self.nameVideo = (args?["name"] as? String)!+".mp4"
          startRecording()
 
     }else if(call.method == "stopRecordScreen"){
@@ -41,9 +39,7 @@ let screenSize = UIScreen.main.bounds
             let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
             result(String(documentsPath.appendingPathComponent(nameVideo)))
         }
-         result(0)
-    }else if(call.method == "isRecording") {
-        result(myResult != nil)
+         result("")
     }
   }
 
@@ -129,7 +125,7 @@ let screenSize = UIScreen.main.bounds
 
                         if (( self.videoWriter?.startWriting ) != nil) {
                             print("Starting writing");
-                            self.myResult!("test.mp4")
+                            self.myResult!(true)
                             self.videoWriter?.startWriting()
                             self.videoWriter?.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
                         }
@@ -140,7 +136,7 @@ let screenSize = UIScreen.main.bounds
                             print("Writting a sample");
                             if  self.videoWriterInput?.append(cmSampleBuffer) == false {
                                 print(" we have a problem writing video")
-                                self.myResult!("we have a problem writing video")
+                                self.myResult!(false)
                             }
                         }
                     }
@@ -153,7 +149,7 @@ let screenSize = UIScreen.main.bounds
                         guard error == nil else {
                            //Handle error
                            print("Screen record not allowed");
-                           self.myResult!("Screen record not allowed")
+                           self.myResult!(false)
                            return;
                        }
                    }
